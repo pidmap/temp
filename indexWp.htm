@@ -1,0 +1,815 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>PIDmap | British Columbia - Property ID Search via Google Maps via WP v2</title>
+    <meta name="keywords" content="BC, British Columbia, Canada, Real Estate, Realty, Realtor" />
+    <meta name="description" content="Fast and Easy Property Search by ID, results displayed on Google Maps." />
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/dark-hive/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="pid.css" />
+    <style>
+        .pidBlueEdge { border: 2px solid #0D85CC; }
+
+        .pidBlueBg { background-color: #0D85CC; }
+
+        .ui-widget-header { background-color: transparent; background: url(""); border: none; }
+
+        div#panels legend { font-weight: bold; font-family: 'Courier New'; font-size: 14px; }
+
+        div#panels fieldset, div#panels legend, .ui-tabs .ui-tabs-panel { background-color: #0972a5; border: 1px solid #26b3f7; }
+
+        div#panels legend { background: url("http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/dark-hive/images/ui-bg_loop_25_000000_21x21.png") repeat scroll 50% 50% #000000; border: none; padding: 4px; border-radius: 8px; }
+
+        /*.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border-top: 1px solid #26b3f7; }*/
+
+        .ui-tabs-nav li.ui-state-default { border: 1px solid #26b3f7 !important; }
+
+        .ui-tabs-nav li.ui-tabs-selected, .ui-tabs-nav li.ui-state-active { border-bottom: none !important; }
+
+        button.ui-state-default { border-top: 1px solid #26b3f7 !important; border-left: 1px solid #26b3f7 !important; }
+
+        .ui-tabs .ui-tabs-panel { padding: 2px; }
+
+        .ui-resizable-nw { cursor: nw-resize; height: 28px; left: -5px; top: -5px; width: 28px; }
+
+        .pac-container { color: #000000; }
+        .notCursor { cursor: not-allowed; }
+    </style>
+    <style>
+        div#mapContainer div#miniMap { position: absolute; bottom: 30px; right: 20px; height: 30%; width: 30%; border: 1px solid #000; border-radius: 8px; z-index: 40; }
+
+            div#mapContainer div#miniMap div#map2 { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 2px solid #0D85CC; border-radius: 8px; }
+
+            div#mapContainer div#miniMap div#syncMapsControl { position: absolute; top: 0; right: 0; padding: 4px; background-color: #0D85CC; border-radius: 8px; }
+
+            div#mapContainer div#miniMap div#miniMapOpen { position: absolute; top: 0; left: 0; width: 16px; height: 16px; padding: 2px; background-color: #0D85CC; border-radius: 8px; cursor: pointer; }
+
+        div#wrapper div#miniMap div#miniMapOpen span { width: 16px; height: 16px; background-color: #0D85CC; }
+
+        html.print { }
+
+        body.print { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background-color: rgb(240, 240, 240); overflow: scroll; }
+
+        div#page { position: absolute; top: 0; left: 0; color: #000000; background-color: #FFF; }
+
+        div#wrapper.print { top: 48px; right: 48px; bottom: 48px; left: 48px; color: black; }
+
+            div#wrapper.print div#mapContainer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+
+        div#wrapper.printP div#miniMap { position: absolute; top: 608px; left: 0; right: 0; height: 352px; width: 100%; }
+
+        div#wrapper.printP2 div#miniMap { position: absolute; top: 1108px; left: 0; right: 0; height: 428px; width: 100%; }
+
+        div#printHeader { position: absolute; top: 0px; left: 0; right: 0; min-height: 80px; background-color: transparent; z-index: 100; }
+
+            div#printHeader > div { top: 50px; left: 108px; width: 576px; z-index: 200; }
+
+        div#wrapper.printP div#printMiddle { position: absolute; top: 608px; left: 0; right: 0; min-height: 50px; background-color: transparent; z-index: 100; }
+
+        div#wrapper.printP2 div#printMiddle { position: absolute; top: 1108px; left: 0; right: 0; min-height: 50px; background-color: transparent; z-index: 100; }
+
+        div#printMiddle > div { top: 50px; left: 32px; width: 670px; z-index: 200; }
+
+        div#wrapper.printP img.printBg, div#wrapper.printL img.printBg, div#wrapper.printP2 img.printBg, div#wrapper.printL2 img.printBg { position: absolute; top: 4px; left: 2px; z-index: 50; }
+
+        div.print p { font-size: 14px; font-weight: normal; cursor: text; }
+
+        div#backToFullScreen { position: absolute; top: 4px; left: 10px; z-index: 50; }
+    </style>
+    <script>
+        var gMap = {};
+        var pm = {};
+        gMap.init = {};
+        gMap.layers = {};
+        gMap.currentLayers = [];
+        gMap.ft = [];
+        gMap.ft[0] = ['juri', 843464, true];
+        gMap.ft[1] = ['alr', 545233, false];
+        gMap.ft[2] = ['cams', 2290211, true];
+        gMap.ft[3] = ['roadsMain', 3308924, false];
+        gMap.ft[4] = ['skiIcons', 2294594, true];
+        gMap.ft[5] = ['skiBounds', 2300366, true];
+        gMap.ft[6] = ['fish', 540755, true];
+        gMap.ft[7] = ['hunt', 4172395, true];
+        gMap.ft[8] = ['schools', 775667, true];
+        gMap.ft[9] = ['airLand', 679553, true];
+        gMap.ft[10] = ['airHeli', 679831, true];
+        gMap.ft[11] = ['airWater', 680849, true];
+
+        gMap.lat = 52;
+        gMap.lng = -120;
+        gMap.zoom = 6;
+
+        gMap.miniMapVis = true;
+
+    </script>
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push( ['_setAccount', 'UA-32834626-1'] );
+        _gaq.push( ['_trackPageview'] );
+
+        ( function () {
+            var ga = document.createElement( 'script' ); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ( 'https:' == document.location.protocol ? 'https://ssl' : 'http://www' ) + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName( 'script' )[0]; s.parentNode.insertBefore( ga, s );
+        } )();
+
+    </script>
+</head>
+<body class="full">
+    <div id="page" class="full">
+        <div id="backToFullScreen" class="hide gmnoprint">
+            <span class="gmnoprint">Go back to:</span>
+            <button class="gmnoprint" onclick="pm.ReformatPage('fullScreen')">FULL Screen View</button>
+        </div>
+        <div id="wrapper" unselectable="on">
+            <div id="mapContainer" class="shadow333 full print">
+                <div id="mapCanvas" class="full">
+                </div>
+                <div id="crosshairsDiv" class="hide">
+                    <img id="crosshairs" src="http://commondatastorage.googleapis.com/landmax.ca/icons/crosshairs.png" height="31" width="31" />
+                </div>
+                <div id="wait" class="hide tsBrBlack2">
+                    <p class="tsBrBlack1">Loading...</p>
+                </div>
+                <div id="gMapLayers" class="gmnoprint" style="margin: 5px; z-index: 0; position: absolute; cursor: pointer; text-align: left; width: 85px;">
+                    <div id="gMapLayersTop" style="direction: ltr; overflow: hidden; text-align: left; position: relative; color: rgb(0, 0, 0); font-family: Arial,sans-serif; -moz-user-select: none; font-size: 13px; background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 1px 6px; border: 1px solid rgb(113, 123, 135); box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4); font-weight: bold;" title="Map may ZOOM OUT, then add a LAYER to the map.">
+                        Layers
+                        <img src="http://maps.gstatic.com/mapfiles/arrow-down.png" style="-moz-user-select: none; border: 0px none; padding: 0px; margin: -2px 0px 0px; position: absolute; right: 6px; top: 50%; width: 7px; height: 4px;" />
+                    </div>
+                    <div id="gMapLayersContent" style="background-color: white; z-index: -1; padding-top: 2px; border-width: 0px 1px 1px; border-style: none solid solid; border-color: -moz-use-text-color rgb(113, 123, 135) rgb(113, 123, 135); -moz-border-top-colors: none; -moz-border-right-colors: none; -moz-border-bottom-colors: none; -moz-border-left-colors: none; -moz-border-image: none; box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4); position: relative; text-align: left; display: none;">
+                        <div id="gMapLayerNone" title="Remove All Layers">
+                            None
+                        </div>
+                        <div id="gMapLayerJuri" title="Show BC Administrative Jurisdictions Layer">
+                            Jurisdictions
+                        </div>
+                        <div id="gMapLayerAlr" title="Show Agricultural Land Reserve Layer">
+                            ALR
+                        </div>
+                        <div id="gMapLayerWeather" title="Show Weather Layer">
+                            Weather
+                        </div>
+                        <div id="gMapLayerCams" title="Show Highway Cameras">
+                            Cams
+                        </div>
+                        <div id="gMapLayerSchools" title="Show All BC Schools">
+                            Schools
+                        </div>
+                        <div id="gMapLayerSkiIcons" title="Show BC Ski Area Icons">
+                            Ski Icons
+                        </div>
+                        <div id="gMapLayerSkiBounds" title="Show BC Ski Area Boundaries">
+                            Ski Area
+                        </div>
+                        <div id="gMapLayerHunt" title="Show BC Hunting Guide Areas">
+                            Hunting
+                        </div>
+                        <div id="gMapLayerFish" title="Show BC Stocked Fishing Lakes">
+                            Fishing
+                        </div>
+                        <div id="gMapLayerAirLand" title="Show Land Airstrips, color coded by surface type">
+                            Air-Land
+                        </div>
+                        <div id="gMapLayerAirHeli" title="Show Heliports ">
+                            Air-Heli
+                        </div>
+                        <div id="gMapLayerAirWater" title="Show Water Aerodromes">
+                            Air-Water
+                        </div>
+                    </div>
+                </div>
+                <div id="miniMap" class="shadow333 print">
+                    <div id="map2">
+                    </div>
+                    <div id="crosshairsDiv2">
+                        <img id="crosshairs2" src="http://commondatastorage.googleapis.com/landmax.ca/icons/crosshairs.png" height="31" width="31" />
+                    </div>
+                    <div id="syncMapsControl" class="gmnoprint">
+                        <label for="syncMapsChk">Sync:</label>
+                        <input id="syncMapsChk" type="checkbox" checked="checked" onchange="gMap.setSync(this)" />
+                    </div>
+                    <div id="miniMapOpen" class="gmnoprint">
+                        <span class="ui-icon ui-icon-arrowthick-2-se-nw"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="printHeader" unselectable="off" class="print hide">
+                <img class="printBg" src="images/PIDmap-Print-BG.png" alt="" width="724" height="94" />
+                <div class="full">
+                    <p contenteditable="true"><strong id="printPID"></strong><span>DELETE THIS TEXT, then add your own comments, then use your browsers print command. Set your printer settings margins to zero, scale to 100% and turn off everything else.</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="panels" unselectable="on" class="unselectable gmnoprint">
+        <div id="controlsPanel" class="tabPanel panel pidBlueEdge">
+            <div class="titleBar pidBlueBg">
+                <div class="topLeft">
+                    <a href="http://pidmap.com" target="_blank" title="GO TO main site.">
+                        <img class="dragImg" src="images/PIDmapIcon64.png" height="64" width="64" alt="PIDmap Home Page!" title="Go to the PIDmap Home Page in a new window." /></a>
+                </div>
+                <h4>PIDmap | BC</h4>
+            </div>
+            <div id="minMax" unselectable="on" draggable="false">
+                <img class="swap32Icon unselectable" draggable="false" src="http://commondatastorage.googleapis.com/landmax.ca/ewm/minMax.png" height="64" width="32" />
+            </div>
+            <div id="pidTabs" class="tabPane">
+                <ul>
+                    <li>
+                        <a href="#tabPidMap">Search</a>
+                    </li>
+                    <li>
+                        <a href="#tabExport">Export</a>
+                    </li>
+                    <li>
+                        <a href="#tabSettings">Settings</a>
+                    </li>
+                    <!--                    <li>
+                        <a href="#tabContact">Contact</a>
+                    </li>-->
+                </ul>
+                <div id="tabPidMap">
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp 1) Enter Place: &nbsp </legend>
+                        <input id="searchTextField" type="text" size="36" placeholder="Start to TYPE, then PICK from list!" />
+                        <br />
+                        <small style="display: inline-block; margin-bottom: 8px">Start to type "City", then Pick.</small>
+                    </fieldset>
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp 2) Type Address &nbsp </legend>
+                        <input id="addressTextField" class="notCursor" type="text" size="36" placeholder="FIRST Pick Place, Then Type Address, Then Press ENTER" onkeydown="if (event.keyCode == 13 || event.keyCode == 9 ) gMap.codeAddress()" disabled="disabled" />
+                        <br />
+                        <small style="display: inline-block; margin-bottom: 8px">Pick PLACE, type ADDRESS, then ENTER.</small>
+                    </fieldset>
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp 3) Show BC Gov land Parcels &nbsp</legend>
+                        <label>Show/Hide parcels</label>
+                        &nbsp
+                        <input id="addParcelsCkBx" type="checkbox" />
+                        <small>(Zoom In Close)</small>
+                    </fieldset>
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp 4) Get PID Fast! &nbsp </legend>
+                        <p>"Right Click" parcel to get PID.<br />
+                            <br />
+                            "Left Click" polygon to see detail.</p>
+                    </fieldset>
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp PID# to Map Search: &nbsp </legend>
+                        <input id="fetchPlotPidTxt" type="text" size="14" value="" onkeydown="if (event.keyCode == 13) document.getElementById('fetchPlotPidBtn').click()" placeholder="Enter PID here." />
+                        <button id="fetchPlotPidBtn" class="juiButton" title="Enter the PID and click the button, the map will zoom in on the parcel colored in ORANGE.">Draw PID</button>
+
+                    </fieldset>
+
+                </div>
+                <div id="tabSettings">
+
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp History (PIDs Viewed) &nbsp </legend>
+                        <span style="width: 128px; display: inline-block">
+                            <select id="selectPids">
+                            </select>
+                        </span>
+                        <button id="clearPidAll" class="juiButton right closeBtn" title="Clear ALL the outlined Parcel Polygons from the map.">XX</button>
+                        <button id="clearPid" class="juiButton right closeBtn" title="Clear the CURRENT outlined Parcel Polygons from the map.">X</button>
+                    </fieldset>
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp Mini-Map &nbsp </legend>
+                        <label for="syncMapsChk">Show/Hide Mini-Map:</label>
+                        <input id="showHideMiniMap" type="checkbox" onchange="gMap.showMiniMap()" checked="checked" />
+                    </fieldset>
+                </div>
+                <!--               <div id="tabContact">
+                    <fieldset class="ui-widget-content">
+                        <legend>Contact Us</legend>
+                        <p>Keith Hern</p>
+                        <p>keith@pidmap.com</p>
+                        <p><a href="http://pidmap.com">PIDmap.com</a></p>
+                    </fieldset>
+                </div>-->
+                <div id="tabExport">
+                    <fieldset class="ui-widget-content" style="width: 210px">
+                        <legend>Export Image</legend>
+                        <p>
+                            Set zoom of map. Click button to export all parcels as 1280x1280 images. Then print or save or share the image.<br />
+                            <button class="right" onclick="gMap.RenderImage()">Export Images</button>
+                        </p>
+                        <br />
+                        <h3>Export To KML <small style="color: red">Experimental</small></h3>
+                        <p>Click the button to generate the text for a KML file in a new window. Then copy/paste this text into a file with the extention ".kml" and it will open in Google Earth.</p>
+                        <button class="right" onclick="gMap.RenderKml2()">Generate KML</button>
+                    </fieldset>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div id="kml" class="hide" style="position: absolute; top: 20%; left: 50%; width: 800px; padding: 10px; color: black; min-height:70%; margin-left: -400px; font-size: 12px; z-index: 1000; background-color: white">
+        <div style="position:absolute; width: 95%; height: 88%; overflow: auto">
+            <div id="kmlRaw" style="position: relative;"></div>
+        </div>
+        <button class="closeBtn" style="position: absolute; top: -10px; right: -10px">X</button>
+    </div>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?&sensor=false&libraries=weather,places,geometry"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+    <script>
+
+        $( function () {
+            $( "div#panels div.tabPanel" ).tabs();
+            $( "div.panel" ).draggable( { handle: "div.titleBar", containment: "document" } );
+
+            $( "div#panels div#minMax" ).click( function () {
+                $( 'div#panels div#pidTabs' ).fadeToggle();
+                $( "div#panels div#minMax img" ).toggleClass( 'swap32Icon' );
+            } );
+
+            $( "div#miniMap" ).resizable( {
+                handles: "nw",
+                containment: "parent",
+                stop: function ( event, ui ) {
+                    //here
+                    google.maps.event.trigger( gMap.map2, 'resize' );
+                    setTimeout( 'gMap.map2.setCenter(map.getCenter())', 800 );
+                    setTimeout( 'gMap.miniMapTweakVis()', 1000 );
+                }
+            } );
+
+            $( '.juiButton' ).button();
+
+            $( 'button#unLoadPlotsBtn' ).button( { disabled: true } );
+            $( 'div#tabSettings input#showHideMiniMap' ).prop( 'checked', true );
+        } )
+    </script>
+    <script>
+
+        $( function () {
+
+            gMap.initMap = function () {
+                window.G = google.maps;
+
+                window.map = new G.Map( document.getElementById( "mapCanvas" ) );
+
+                gMap.init.latLng = new G.LatLng( gMap.lat, gMap.lng );
+                gMap.init.latLngOpen = gMap.init.latLng;
+                gMap.init.zoom = gMap.zoom;
+                gMap.init.zoomOpen = gMap.init.zoom;
+                gMap.init.typeId = G.MapTypeId.TERRAIN;
+
+                gMap.layers.canada = new G.FusionTablesLayer( 844111, {
+                    "clickable": false
+                } );
+
+                gMap.layers.airports = new G.KmlLayer( 'http://pidmap.com/kml/AirportsCA2.kml', {
+                    "clickable": false,
+                    "preserveViewport": true
+                } );
+                gMap.layers.cloudLayer = new google.maps.weather.CloudLayer();
+
+                gMap.layers.weatherLayer = new google.maps.weather.WeatherLayer( {
+                    temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS,
+                    windSpeedUnits: google.maps.weather.WindSpeedUnit.KILOMETERS_PER_HOUR
+                } );
+
+                for ( var i = 0, L = gMap.ft.length; i < L; i++ ) {
+                    var layerName = gMap.ft[i][0];
+                    var layerValue = gMap.ft[i][1];
+                    var clickBool = gMap.ft[i][2];
+                    gMap.layers[layerName] = new G.FusionTablesLayer( layerValue, {
+                        "clickable": clickBool
+                    } );
+                };
+
+                gMap.clearLayers = function () {
+                    var layerNum = gMap.currentLayers.length;
+                    for ( var i = 0; i < layerNum; i++ ) {
+                        gMap.currentLayers[i].setMap();
+                    }
+                    gMap.currentLayers.length = 0;
+                    $( 'div#mapContainer div#gMapLayers div#gMapLayersContent > div.selected' ).removeClass( 'selected' );
+                    $( 'div#gMapFooter' ).text( "" );
+                }
+
+                gMap.setLayersByZoom = function ( z ) {
+
+                    if ( z <= 7 ) {
+                        map.setMapTypeId( G.MapTypeId.TERRAIN );
+                        gMap.layers.roadsMain.setMap();
+                        gMap.layers.canada.setMap( map );
+                        gMap.layers.airports.setMap();
+
+                        if ( !$( 'div#gMapLayerWeather' ).hasClass( 'selected' ) ) {
+                            gMap.clearLayers();
+                            $( 'div#gMapLayerWeather' ).click();
+                            $( 'div#gMapLayersContent' ).hide();
+                        }
+
+                    } else if ( z >= 8 && z <= 13 ) {
+                        map.setMapTypeId( G.MapTypeId.TERRAIN );
+                        gMap.layers.canada.setMap();
+                        gMap.layers.roadsMain.setMap( map );
+                        gMap.layers.airports.setMap( map );
+
+                    } else if ( z >= 14 ) {
+                        map.setMapTypeId( G.MapTypeId.HYBRID );
+                        if ( $( 'div#gMapLayerWeather' ).hasClass( 'selected' ) ) {
+                            $( 'div#gMapLayerWeather' ).click();
+                            $( 'div#gMapLayersContent' ).hide();
+                        }
+                        gMap.layers.canada.setMap();
+                        gMap.layers.roadsMain.setMap();
+                        gMap.layers.airports.setMap( map );
+                    }
+                }
+
+                var x = window.location.hash;
+
+                if ( x.length > 0 ) {
+                    var hashRemoved = x.replace( "#", "" );
+                    gMap.hashArray = hashRemoved.split( "&" );
+
+                    gMap.hashLat = gMap.hashArray[0];
+                    gMap.hashLng = gMap.hashArray[1];
+                    gMap.init.zoom = parseInt( gMap.hashArray[2], 10 );
+                    gMap.init.latLng = new G.LatLng( gMap.hashLat, gMap.hashLng );
+                    gMap.hashPid = gMap.hashArray[3];
+                    gMap.hashLayer = 3;
+                    if ( typeof gMap.hashLayer == "number" ) {
+                        gMap.hashLayer = parseInt( gMap.hashArray[4], 10 );
+                        if ( gMap.hashLayer < 1 || gMap.hashLayer > 20 ) {
+                            gMap.hashLayer = 3;
+                        }
+                    }
+
+                    if ( gMap.init.zoom >= 15 ) {
+                        gMap.init.typeId = G.MapTypeId.HYBRID;
+                    }
+
+                    if ( typeof gMap.hashPid == "string" ) { setTimeout( 'gMap.initLayers()', 2000 ) };
+
+                }
+
+                gMap.initLayers = function () {
+
+                    if ( typeof gMap.hashPid == "string" && gMap.hashPid.length > 8 ) {
+                        $( 'input#fetchPlotPidTxt' ).val( gMap.hashPid );
+                        $( 'button#fetchPlotPidBtn' ).click();
+                        $( "div#minMax" ).click();
+                        setTimeout( '$("button#loadPlotsBtn").click();', 2000 );
+                    }
+                    if ( typeof gMap.hashLayer == "number" ) {
+                        $( 'div#gMapLayersContent div' ).eq( gMap.hashLayer ).click();
+                        $( 'div#gMapLayersTop' ).click();
+                    }
+                }
+
+                var mapOptions = {
+                    backgroundColor: "#326b4b",
+                    center: gMap.init.latLng,
+                    zoom: gMap.init.zoom,
+                    mapTypeId: gMap.init.typeId,
+                    disableDefaultUI: true,
+                    mapTypeControl: true,
+                    mapTypeControlOptions: {
+                        style: G.MapTypeControlStyle.DROPDOWN_MENU,
+                        position: google.maps.ControlPosition.TOP_RIGHT
+                    },
+                    panControl: true,
+                    panControlOptions: {
+                        position: google.maps.ControlPosition.RIGHT_TOP
+                    },
+                    zoomControl: true,
+                    zoomControlOptions: {
+                        style: google.maps.ZoomControlStyle.LARGE,
+                        position: google.maps.ControlPosition.RIGHT_TOP
+                    },
+                    streetViewControl: true,
+                    streetViewControlOptions: {
+                        position: google.maps.ControlPosition.RIGHT_TOP
+                    },
+                    overviewMapControl: false,
+                    overviewMapControlOptions: {
+                        opened: false
+                    },
+                    minZoom: 3
+                };
+
+                map.setOptions( mapOptions );
+
+                gMap.setHash = function () {
+
+                    var tempCenter = map.getCenter();
+
+                    gMap.hashLat = tempCenter.lat().toFixed( 6 );
+                    gMap.hashLng = tempCenter.lng().toFixed( 6 );
+                    gMap.hashZoom = map.getZoom();
+                    gMap.hashPid = $( 'input#fetchPlotPidTxt' ).val() || "noPID";
+                    gMap.hashLayer = $( 'div#gMapLayers div.selected' ).index() || "noLayer";
+
+                    gMap.hash = "#" + gMap.hashLat + "&" + gMap.hashLng + "&" + gMap.hashZoom + "&" + gMap.hashPid + "&" + gMap.hashLayer;
+
+
+                    window.location.hash = gMap.hash;
+                };
+
+                gMap.zoomChanged = function () {
+                    var newZoom = map.getZoom();
+                    gMap.setLayersByZoom( newZoom );
+                };
+
+                gMap.addInitEvents = function () {
+                    gMap.zoomListener = G.event.addListener( map, 'zoom_changed', function () {
+                        gMap.zoomChanged();
+                    } );
+
+                    gMap.hashListener = G.event.addListener( map, 'idle', function () {
+                        gMap.setHash()
+                    } );
+                };
+
+                $.getScript( 'http://commondatastorage.googleapis.com/landmax.ca/js/keyDragZoom.js', function () {
+
+                    setTimeout( 'gMap.addInitEvents();', 5000 );
+                    setTimeout( 'map.enableKeyDragZoom()', 4000 );
+                    gMap.setLayersByZoom( gMap.init.zoom );
+                    $( 'div#gMapLayersContent' ).hide();
+                } );
+                //$.getScript( 'http://PIDmap.com/bc/scripts/mapBcPHP3rc.js', function () {
+                $.getScript( 'http://pidmap.azurewebsites.net/bc/scripts/mapBcPHP3rc.js', function () {
+
+                } );
+            }
+
+            gMap.initMap();
+
+            $( 'div#gMapLayersTop' ).click( function () {
+                $( 'div#gMapLayersContent' ).toggle();
+            } );
+
+            $( 'div#mapContainer div#gMapLayers div#gMapLayersContent > div' ).click( function () {
+
+                if ( $( this ).hasClass( 'selected' ) ) {
+                    gMap.clearLayers();
+                }
+                else {
+
+                    gMap.clearLayers();
+                    $( this ).addClass( 'selected' );
+                    var currentLayer = this.id;
+                    if ( currentLayer === "gMapLayerNone" ) {
+                        $( 'div#gMapFooter' ).text( "" );
+                    }
+                    else if ( currentLayer === "gMapLayerJuri" ) {
+                        gMap.layers.juri.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.juri );
+                        $( 'div#gMapFooter' ).text( "Layer: BC Administrative Jurisdictions" );
+                    }
+                    else if ( currentLayer === "gMapLayerAlr" ) {
+                        gMap.layers.alr.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.alr );
+                        $( 'div#gMapFooter' ).text( "Layer: BC Agricultural Land Reserve" );
+                    }
+                    else if ( currentLayer === "gMapLayerWeather" ) {
+                        gMap.layers.weatherLayer.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.weatherLayer );
+                        gMap.layers.cloudLayer.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.cloudLayer );
+                        $( 'div#gMapFooter' ).text( 'Layer: "Real Time" Cloud Cover and Weather!' );
+                    }
+                    else if ( currentLayer === "gMapLayerCams" ) {
+                        gMap.layers.cams.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.cams );
+                        $( 'div#gMapFooter' ).text( "Layer: DriveBC Highway Cameras" );
+                    }
+                    else if ( currentLayer === "gMapLayerSchools" ) {
+                        gMap.layers.schools.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.schools );
+                        $( 'div#gMapFooter' ).text( "Layer: BC Schools" );
+                    }
+                    else if ( currentLayer === "gMapLayerSkiIcons" ) {
+                        gMap.layers.skiIcons.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.skiIcons );
+                        $( 'div#gMapFooter' ).text( "Layer: BC Ski Area Icons, Downhill, X-C, Proposed, Abandoned" );
+                    }
+                    else if ( currentLayer === "gMapLayerSkiBounds" ) {
+                        gMap.layers.skiBounds.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.skiBounds );
+                        $( 'div#gMapFooter' ).text( "Layer: BC Ski Area GIS Boundaries" );
+                    }
+                    else if ( currentLayer === "gMapLayerHunt" ) {
+                        gMap.layers.hunt.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.hunt );
+                        $( 'div#gMapFooter' ).text( "Layer: Hunting Guide Outfitter Areas of BC" );
+                    }
+                    else if ( currentLayer === "gMapLayerFish" ) {
+                        gMap.layers.fish.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.fish );
+                        $( 'div#gMapFooter' ).text( "Layer: Stocked Lakes in BC" );
+                    }
+                    else if ( currentLayer === "gMapLayerAirLand" ) {
+                        gMap.layers.airLand.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.airLand );
+                        $( 'div#gMapFooter' ).text( "Layer: Airstrips - Green = Paved, Red = Turf, Yellow = Gravel. " );
+                    }
+                    else if ( currentLayer === "gMapLayerAirHeli" ) {
+                        gMap.layers.airHeli.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.airHeli );
+                        $( 'div#gMapFooter' ).text( "Layer: Heliports" );
+                    }
+                    else if ( currentLayer === "gMapLayerAirWater" ) {
+                        gMap.layers.airWater.setMap( map );
+                        gMap.currentLayers.push( gMap.layers.airWater );
+                        $( 'div#gMapFooter' ).text( "Layer: Water Aerodromes" );
+                    }
+                }
+                $( 'div#gMapLayersContent' ).toggle();
+                gMap.setHash();
+            } ); // end of Layers
+        } );  //end of document.ready
+
+    </script>
+    <script>
+        $( function () {
+            gMap.placeDefaultBounds = map.getBounds();
+            gMap.placeInput = document.getElementById( 'searchTextField' );
+            gMap.placeOptions = {
+                bounds: gMap.placeDefaultBounds,
+                types: ['(cities)'],
+                componentRestrictions: { country: 'ca' }
+            };
+
+            gMap.placeAutocomplete = new google.maps.places.Autocomplete( gMap.placeInput, gMap.placeOptions );
+            gMap.placeAutocomplete.bindTo( 'bounds', map );
+
+            google.maps.event.addListener( gMap.placeAutocomplete, 'place_changed', function () {
+                gMap.placeResult = gMap.placeAutocomplete.getPlace();
+                if ( gMap.placeResult.geometry.viewport ) {
+                    map.fitBounds( gMap.placeResult.geometry.viewport );
+                } else {
+                    map.setCenter( gMap.placeResult.geometry.location );
+                    map.setZoom( 13 );
+                }
+                $( 'input#addressTextField' ).attr( 'disabled', false ).removeClass( 'notCursor' );
+            } );
+
+            gMap.geocoder = new google.maps.Geocoder();
+
+            gMap.codeAddress = function () {
+
+                if ( gMap.placeResult.formatted_address ) {
+
+                    var address = document.getElementById( "addressTextField" ).value + ", " + gMap.placeResult.formatted_address;
+                    var currentBounds = map.getBounds();
+
+                    gMap.geocoder.geocode( { 'address': address, 'region': 'ca', 'bounds': currentBounds }, function ( results, status ) {
+                        if ( status == google.maps.GeocoderStatus.OK ) {
+                            map.setCenter( results[0].geometry.location );
+                            map.setZoom( 17 );
+                        } else {
+                            alert( "Geocode was not successful for the following reason: " + status );
+                        }
+                    } );
+
+                } else { alert( 'You need to PICK a PLACE first!\n\nTHEN type an address.' ) }
+            }
+
+        } )
+    </script>
+    <script>
+        $( function () {
+
+            gMap.resetMap = function () {
+                google.maps.event.trigger( map, 'resize' );
+                google.maps.event.trigger( gMap.map2, 'resize' );
+                setTimeout( 'map.setCenter(gMap.resetCenter)', 500 );
+                setTimeout( 'gMap.map2.setCenter(gMap.resetCenter)', 800 );
+            }
+
+            gMap.unLoad2ndMap = function () {
+                gMap.unSyncMaps();
+                gMap.map2Marker = null;
+                gMap.map2 = null;
+            }
+
+            gMap.miniMapTweakVis = function () {
+
+                gMap.map2.setOptions( { zoomControl: false } )
+                $( "div#map2 .gmnoprint" ).hide();
+                gMap.map2.setOptions( {
+                    zoomControl: true, zoomControlOptions: {
+                        style: google.maps.ZoomControlStyle.SMALL,
+                        position: google.maps.ControlPosition.LEFT_BOTTOM
+                    }
+                } )
+            }
+
+            gMap.load2ndMap = function () {
+                gMap.map2Center = map.getCenter();
+                gMap.map2Zoom = map.getZoom() - 5;
+                gMap.map2 = new G.Map( document.getElementById( "map2" ) );
+
+                var map2Options = {
+                    backgroundColor: "#326b4b",
+                    center: gMap.map2Center,
+                    zoom: gMap.map2Zoom,
+                    mapTypeId: G.MapTypeId.TERRAIN,
+                    disableDefaultUI: true,
+                    mapTypeControl: false,
+                    streetViewControl: false,
+                    overviewMapControl: false,
+                    minZoom: 3,
+                    maxZoom: 15
+                };
+
+                gMap.map2.setOptions( map2Options );
+                gMap.syncMaps();
+                setTimeout( 'gMap.miniMapTweakVis()', 1000 );
+            }
+
+            gMap.syncMaps = function () {
+                gMap.mapDrag = google.maps.event.addListener( map, 'dragend', function () {
+                    gMap.map2.setCenter( map.getCenter() );
+                    var zoom = map.getZoom();
+                    if ( zoom <= 20 ) {
+                        gMap.map2.setZoom( zoom - 6 );
+                    } else { gMap.map2.setZoom( 15 ) }
+                } );
+                gMap.miniMapDrag = google.maps.event.addListener( gMap.map2, 'dragend', function () {
+                    map.setCenter( gMap.map2.getCenter() );
+                } );
+                $( 'div#miniMap div#crosshairsDiv2' ).show();
+            }
+
+            gMap.unSyncMaps = function () {
+                google.maps.event.removeListener( gMap.mapDrag );
+                google.maps.event.removeListener( gMap.miniMapDrag );
+                $( 'div#miniMap div#crosshairsDiv2' ).hide();
+            }
+
+            gMap.setSync = function ( e ) {
+                if ( $( e ).is( ":checked" ) ) {
+                    gMap.syncMaps();
+                } else { gMap.unSyncMaps() }
+            }
+
+            gMap.showMiniMap = function () {
+                $( 'div#miniMap' ).toggleClass( 'hide' );
+                $( 'div#crosshairsDiv' ).toggleClass( 'hide' );
+                if ( !gMap.miniMapVis ) {
+                    google.maps.event.trigger( gMap.map2, 'resize' );
+                    setTimeout( 'gMap.map2.setCenter(map.getCenter())', 800 );
+                    setTimeout( 'gMap.miniMapTweakVis()', 1000 );
+                    gMap.miniMapVis = true;
+                } else { gMap.miniMapVis = false }
+            }
+
+            google.maps.event.addListenerOnce( map, 'tilesLoaded', gMap.load2ndMap() )
+
+        } )
+    </script>
+    <script>
+        $( function () {
+
+            $( 'input[name=printSize]:radio' ).change( function () {
+                var size = $( this ).val();
+                var sizeA = size.split( ',' );
+                var width = sizeA[0];
+                var height = sizeA[1];
+                $( 'div#tabPrint input#pageWidth' ).val( width );
+                $( 'div#tabPrint input#pageHeight' ).val( height );
+            } );
+
+            pm.ReformatPage = function ( size ) {
+
+                if ( size === "fullScreen" ) {
+                    $( 'html, body, div#page, div#wrapper' ).removeClass( 'print' );
+                    $( 'div#backToFullScreen, div#printHeader, div#printMiddle' ).hide();
+                    $( 'div#page' ).css( { 'width': '', 'height': '' } );
+                    $( 'div#miniMap' ).css( { 'width': '', 'height': '', 'top': '', 'left': '' } );
+                    $( 'div#mapContainer .gmnoprint, div#miniMap .gmnoprint' ).show();
+                    $( 'div#panels' ).show();
+                    gMap.syncMaps();
+                } else {
+
+                    gMap.resetCenter = map.getCenter();
+
+                    var width = $( 'div#tabPrint input#pageWidth' ).val();
+                    var height = $( 'div#tabPrint input#pageHeight' ).val();
+
+                    $( 'html, body, div#page, div#wrapper' ).addClass( 'print' );
+                    $( 'div#backToFullScreen, div#printHeader' ).show();
+                    $( 'div#page.print' ).css( { 'width': width, 'height': height } );
+                    $( 'div#miniMap' ).css( { 'top': '', 'left': '', 'width': '', 'height': '' } );
+                    $( 'div#panels' ).hide();
+                    $( 'div#miniMap .gmnoprint, div#mapContainer .gmnoprint' ).hide();
+                    gMap.unSyncMaps();
+                }
+                gMap.resetMap();
+            }
+        } )
+    </script>
+</body>
+</html>

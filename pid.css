@@ -1,0 +1,76 @@
+﻿html, body, img, h1, h2, h3, h4, h5, h6, p, a { margin: 0; padding: 0; font-weight: normal; border: none; outline: none; overflow: hidden; }
+html { font-size: 100%; }
+body { background-color: #000; color: #FFF; font-family: "trebuchet ms", "Lucida Grande", "Lucida Sans Unicode", "bitstream vera sans", verdana; outline: none; z-index:0; }
+a { color: #0000FF; cursor: pointer !important; }
+h1 { font-size: 24px; }
+button { cursor: pointer; outline: none; }
+    button.closeBtn { color: red !important; font-weight: bold !important; font-family:'Courier New' !important; font-size:20px !important;}
+    button.juiButton { box-shadow: 2px 2px 2px #333333; margin-left: 4px; min-height: 27px;}
+
+    button.closeBtn span.ui-button-text {padding-top:0 !important;padding-bottom:0 !important;padding-left:6px !important;padding-right:6px !important; }
+select { padding: 3px; }
+.button { font-size: 18px; background-image: url(http://commondatastorage.googleapis.com/landmax.ca/css/Transparent.gif); background-repeat: repeat; cursor: pointer; }
+input:focus, input:active { outline: none; }
+input[type='radio'], input[type='button'], label { cursor: pointer; }
+.centerDiv { margin: 0 auto; }
+.left { float: left; }
+.right { float: right; }
+.bottomRight { position: absolute; right: 10px; bottom: 10px; z-index: 100; }
+.hide { display: none; }
+.visible { visibility: visible; }
+.hidden { visibility: hidden; }
+.clearBg { display: inline-block; margin: 6px; padding: 10px; box-shadow: 4px 4px 8px #333; border-radius: 8px; -moz-box-shadow: 4px 4px 8px #333; background-image: url(http://commondatastorage.googleapis.com/landmax.ca/css/grey60.png); -webkit-box-shadow: 4px 4px 8px #333; }
+.shadow333{box-shadow: 4px 4px 8px #333; -moz-box-shadow: 4px 4px 8px #333; -webkit-box-shadow: 4px 4px 8px #333;}
+.orangeEdge { border: 2px solid #f60; }
+.orangeBg { background-color: #F60; }
+.full { position: absolute !important; top: 0; left: 0; right: 0; bottom: 0; }
+.hundred { width: 100% !important; height: 100% !important; }
+.right { float: right !important; }
+.tsBrBlack1 { text-shadow: 1px 1px 1px #000; filter: progid:DXImageTransform.Microsoft.Glow(Color=#000000, Strength=1); }
+span.tsBrBlack1 { display: inline-block; }
+.tsTlWhite1 { text-shadow: -1px -1px 1px #FFF; }
+.transparent01 { -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=1)"; -moz-opacity: 0.01; -khtml-opacity: 0.01; filter: alpha(opacity=1); opacity: 0.01; }
+.transparent5 { -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; -moz-opacity: 0.5; -khtml-opacity: 0.5; filter: alpha(opacity=50); opacity: 0.5; }
+.transparent1 { -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)"; -moz-opacity: 1; -khtml-opacity: 1; filter: alpha(opacity=100); opacity: 1; }
+div#wrapper { position: absolute; top: 3px; left: 3px; right: 3px; bottom: 3px; cursor: default; z-index: 0; }
+div#mapContainer {border-radius: 8px; z-index:10 }
+div#mapContainer div#mapCanvas {border: 2px solid #0D85CC; border-radius: 8px; margin: 0; color:#000}
+    div#mapContainer div#mapCanvas h3 { font-size: 18px; }
+div#mapContainer div#crosshairsDiv { cursor: none; height: 31px; left: 50%; margin-left: -15px; margin-top: -15px; pointer-events: none; position: absolute; top: 50%; width: 31px; }
+div#miniMap div#crosshairsDiv2 { cursor: none; height: 31px; left: 50%; margin-left: -15px; margin-top: -15px; pointer-events: none; position: absolute; top: 50%; width: 31px; }
+div#mapContainer div#gMapLayers { position: absolute; top: 3px; right: 100px; width: 130px; z-index: 200 !important; }
+    div#mapContainer div#gMapLayers div#gMapLayersContent > div.selected { font-weight: bold; }
+    div#mapContainer div#gMapLayers div#gMapLayersContent > div { padding: 2px 5px 3px; background-color: rgb(255, 255, 255); color: rgb(51, 51, 51); font-weight: normal; font-size: 13px; font-family: Arial, sans-serif; -moz-user-select: none; }
+        div#mapContainer div#gMapLayers div#gMapLayersContent > div:hover { background-color: #E6E6E6 !important; }
+    div#mapContainer div#gMapLayers div#gMapLayersTop:hover { background: -moz-linear-gradient(center top, #FFF, #E6E6E6) repeat scroll 0 0 transparent !important; }
+    div#mapContainer div#gMapLayers:hover { z-index: 10000 !important; }
+    div#mapContainer div#gMapLayers:focus { outline: -webkit-focus-ring-color auto 5px; }
+div#mapContainer div.placesIw { width: 400px; }
+div#minMax { position: absolute; top: 2px; right: 4px; width: 32px; height: 32px; -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; -moz-opacity: 0.5; -khtml-opacity: 0.5; cursor: pointer; filter: alpha(opacity=50); opacity: 0.5; overflow: hidden; }
+    div#minMax:hover { -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)"; -moz-opacity: 1; -khtml-opacity: 1; filter: alpha(opacity=100); opacity: 1; }
+div#panels {font-size:70%; z-index:500 }
+div#panels fieldset { margin: 4px; }
+div#panels small { font-size: 11px; }
+div#panels div.panel { position: absolute; top: 40px; left: 40px; min-width: 240px; box-shadow: 4px 4px 8px #333; border-radius: 8px; border-radius: 8px; -moz-box-shadow: 4px 4px 8px #333; -webkit-box-shadow: 4px 4px 8px #333; z-index: 600; }
+    div#panels div.panel div.titleBar { position: absolute; top: 0; left: 0; right: 0; height: 36px; margin: -2px; box-shadow: 4px 4px 8px #333; border-top-left-radius: 8px; border-top-right-radius: 8px; cursor: move; }
+        div#panels div.panel div.titleBar div.closeBtn { position: absolute; top: -12px; right: -12px; width: 44px; height: 44px; }
+        div#panels div.panel div.titleBar div.topLeft { position: absolute; top: -32px; left: -32px; width: 64px; height: 64px; }
+        div#panels div.panel div.titleBar h4 { margin-top: 5px; margin-left: 37px; font-weight: bold; font-size: 24px; font-family: "Courier New", Courier, monospace; }
+    div#panels div.panel div.pane { position: relative; top: 32px; left: 0; right: 0; bottom: 0; background-image: url(http://commondatastorage.googleapis.com/landmax.ca/css/grey60.png); border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
+    div#panels div.panel:hover { background-image: url(http://commondatastorage.googleapis.com/landmax.ca/css/grey60.png); }
+div#panels div.tabPane { margin-top: 36px; }
+    div#panels select#selectPids { width:140px }
+div#pac-container {z-index:10000 }
+div#wait { position: absolute; top: 50%; left: 50%; margin-left: -136px; margin-top: -56px; color: #FFFFFF; z-index: 1000; }
+
+    div#wait p { font-size: 72px; font-weight: bold; }
+.swap32Icon { margin-top: -32px; }
+.unselectable { user-select: none; -o-user-select: none; -moz-user-select: -moz-none; -khtml-user-select: none; -webkit-user-select: none; }
+/*        div#panels a#tabHelp{ padding: 0; }
+        div#panels a#tabHelp img{ margin-top:-8px }
+*/
+.ui-tabs .ui-tabs-nav { margin-left: 10px; margin-right: 10px; margin-bottom: -6px; }
+    .ui-tabs .ui-tabs-nav li { top: -4px; }
+        .ui-tabs .ui-tabs-nav li a { padding: 4px; }
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-size: 0.8em; resize: vertical; }
+.ui-tabs .ui-tabs-panel { margin-top: -1px; padding: 1px; background-color: #FFF; border-radius: 8px; border: 1px solid black; }
