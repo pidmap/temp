@@ -1,0 +1,785 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>PIDmap | New Zealand - Property ID Search | v-0925</title>
+    <meta name="keywords" content="New Zealand, Real Estate, Realty, Realtor" />
+    <meta name="description" content="Fast and Easy Map Search, click to get Property ID, details etc." />
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/dark-hive/jquery-ui.css" />
+<!--    <link rel="stylesheet" type="text/css" href="../bc/pid.css" />-->
+    <!-- Global Styles -->
+    <style>
+        html, body, img, h1, h2, h3, h4, h5, h6, p, a { margin: 0; padding: 0; font-weight: normal; border: none; outline: none; overflow: hidden; }
+        html { font-size: 100%; }
+        body { background-color: #000; color: #FFF; font-family: "trebuchet ms", "Lucida Grande", "Lucida Sans Unicode", "bitstream vera sans", verdana; outline: none; z-index: 0; }
+        a { color: #0000FF; cursor: pointer !important; }
+        h1 { font-size: 24px; }
+        button { cursor: pointer; outline: none; }
+            button.closeBtn { color: red !important; font-weight: bold !important; font-family: 'Courier New' !important; font-size: 20px !important; }
+            button.juiButton { box-shadow: 2px 2px 2px #333333; margin-left: 4px; min-height: 27px; }
+            button.closeBtn span.ui-button-text { padding-top: 0 !important; padding-bottom: 0 !important; padding-left: 6px !important; padding-right: 6px !important; }
+        select { padding: 3px; }
+        input:focus, input:active { outline: none; }
+        input[type='radio'], input[type='button'], label { cursor: pointer; }
+    </style>
+    <!-- Colors -->
+    <style>
+        .orangeEdge { border: 2px solid #f60; }
+        .orangeBg { background-color: #F60; }
+        .pidBlueEdge { border: 2px solid #0D85CC; }
+        .pidBlueBg { background-color: #0D85CC; }
+        .shadow333 { box-shadow: 4px 4px 8px #333; -moz-box-shadow: 4px 4px 8px #333; -webkit-box-shadow: 4px 4px 8px #333; }
+        .tsBrBlack1 { text-shadow: 1px 1px 1px #000; filter: progid:DXImageTransform.Microsoft.Glow(Color=#000000, Strength=1); }
+        span.tsBrBlack1 { display: inline-block; }
+        .tsTlWhite1 { text-shadow: -1px -1px 1px #FFF; }
+    </style>
+    <!-- Classess -->
+    <style>
+        .bottomRight { position: absolute; right: 10px; bottom: 10px; z-index: 100; }
+        .button { font-size: 18px; background-image: url(http://commondatastorage.googleapis.com/landmax.ca/css/Transparent.gif); background-repeat: repeat; cursor: pointer; }
+        .centerDiv { margin: 0 auto; }
+        .clearBg { display: inline-block; margin: 6px; padding: 10px; box-shadow: 4px 4px 8px #333; border-radius: 8px; -moz-box-shadow: 4px 4px 8px #333; background-image: url(http://commondatastorage.googleapis.com/landmax.ca/css/grey60.png); -webkit-box-shadow: 4px 4px 8px #333; }
+        .full { position: absolute !important; top: 0; left: 0; right: 0; bottom: 0; }
+        .hidden { visibility: hidden; }
+        .hide { display: none; }
+        .hundred { width: 100% !important; height: 100% !important; }
+        .left { float: left; }
+        .right { float: right; }
+        .swap32Icon { margin-top: -32px; }
+        .transparent01 { -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=1)"; -moz-opacity: 0.01; -khtml-opacity: 0.01; filter: alpha(opacity=1); opacity: 0.01; }
+        .transparent5 { -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; -moz-opacity: 0.5; -khtml-opacity: 0.5; filter: alpha(opacity=50); opacity: 0.5; }
+        .transparent1 { -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)"; -moz-opacity: 1; -khtml-opacity: 1; filter: alpha(opacity=100); opacity: 1; }
+        .unselectable { user-select: none; -o-user-select: none; -moz-user-select: -moz-none; -khtml-user-select: none; -webkit-user-select: none; }
+        .visible { visibility: visible; }
+    </style>
+    <!-- Layout -->
+    <style>
+        div#mapContainer div.iwDiv { width: 240px; height: 150px; }
+        div#mapContainer { border-radius: 8px; z-index: 10; }
+            div#mapContainer div#crosshairsDiv { cursor: none; height: 31px; left: 50%; margin-left: -15px; margin-top: -15px; pointer-events: none; position: absolute; top: 50%; width: 31px; }
+            /*div#mapContainer div#gMapLayers { position: absolute; top: 3px; right: 100px; width: 130px; z-index: 200 !important; }
+                div#mapContainer div#gMapLayers div#gMapLayersContent > div.selected { font-weight: bold; }
+                div#mapContainer div#gMapLayers div#gMapLayersContent > div { padding: 2px 5px 3px; background-color: rgb(255, 255, 255); color: rgb(51, 51, 51); font-weight: normal; font-size: 13px; font-family: Arial, sans-serif; -moz-user-select: none; }
+                    div#mapContainer div#gMapLayers div#gMapLayersContent > div:hover { background-color: #E6E6E6 !important; }
+                div#mapContainer div#gMapLayers div#gMapLayersTop:hover { background: -moz-linear-gradient(center top, #FFF, #E6E6E6) repeat scroll 0 0 transparent !important; }
+                div#mapContainer div#gMapLayers:hover { z-index: 10000 !important; }
+                div#mapContainer div#gMapLayers:focus { outline: -webkit-focus-ring-color auto 5px; }*/
+            div#mapContainer div#mapCanvas { border: 2px solid #0D85CC; border-radius: 8px; margin: 0; color: #000; }
+                div#mapContainer div#mapCanvas h3 { font-size: 18px; }
+
+            div#mapContainer div#miniMap div#crosshairsDiv2 { cursor: none; height: 31px; left: 50%; margin-left: -15px; margin-top: -15px; pointer-events: none; position: absolute; top: 50%; width: 31px; }
+            div#mapContainer div#miniMap { position: absolute; bottom: 30px; right: 20px; height: 30%; width: 30%; border: 1px solid #000; border-radius: 8px; z-index: 40; }
+                div#mapContainer div#miniMap div#map2 { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 2px solid #0D85CC; border-radius: 8px; }
+                div#mapContainer div#miniMap div#syncMapsControl { position: absolute; top: 0; right: 0; padding: 4px; background-color: #0D85CC; border-radius: 8px; }
+                div#mapContainer div#miniMap div#miniMapOpen { position: absolute; top: 0; left: 0; width: 16px; height: 16px; padding: 2px; background-color: #0D85CC; border-radius: 8px; cursor: pointer; }
+                    div#mapContainer div#miniMap div#miniMapOpen span { width: 16px; height: 16px; background-color: #0D85CC; }                
+            div#mapContainer div.placesIw { width: 400px; }
+
+        div#minMax { position: absolute; top: 2px; right: 4px; width: 32px; height: 32px; -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; -moz-opacity: 0.5; -khtml-opacity: 0.5; cursor: pointer; filter: alpha(opacity=50); opacity: 0.5; overflow: hidden; }
+            div#minMax:hover { -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)"; -moz-opacity: 1; -khtml-opacity: 1; filter: alpha(opacity=100); opacity: 1; }
+        
+            div#panels { font-size: 70%; z-index: 500; }
+            div#panels fieldset { margin: 4px; }
+            div#panels fieldset legend { font-weight: bold; font-family: 'Courier New'; font-size: 14px; }
+            div#panels fieldset legend { background: url("http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/dark-hive/images/ui-bg_loop_25_000000_21x21.png") repeat scroll 50% 50% #000000; border: none; padding: 4px; border-radius: 8px; }
+            div#panels div.panel { position: absolute; top: 40px; left: 40px; min-width: 240px; box-shadow: 4px 4px 8px #333; border-radius: 8px; border-radius: 8px; -moz-box-shadow: 4px 4px 8px #333; -webkit-box-shadow: 4px 4px 8px #333; z-index: 600; }
+                div#panels div.panel div.titleBar { position: absolute; top: 0; left: 0; right: 0; height: 36px; margin: -2px; box-shadow: 4px 4px 8px #333; border-top-left-radius: 8px; border-top-right-radius: 8px; cursor: move; }
+                    div#panels div.panel div.titleBar div.closeBtn { position: absolute; top: -12px; right: -12px; width: 44px; height: 44px; }
+                    div#panels div.panel div.titleBar div.topLeft { position: absolute; top: -32px; left: -32px; width: 64px; height: 64px; }
+                    div#panels div.panel div.titleBar h4 { margin-top: 5px; margin-left: 37px; font-weight: bold; font-size: 24px; font-family: "Courier New", Courier, monospace; }
+                div#panels div.panel div.pane { position: relative; top: 32px; left: 0; right: 0; bottom: 0; background-image: url(http://commondatastorage.googleapis.com/landmax.ca/css/grey60.png); border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
+                div#panels div.panel:hover { background-image: url(http://commondatastorage.googleapis.com/landmax.ca/css/grey60.png); }
+            div#panels div.tabPane { margin-top: 36px; }
+            div#panels select#selectPids { width: 140px; }
+            div#panels select#selectPids { width: 80px; }
+            div#panels small { font-size: 11px; }
+        div#wait { position: absolute; top: 50%; left: 50%; margin-left: -136px; margin-top: -56px; color: #FFFFFF; z-index: 1000; }
+        div#wait p { font-size: 72px; font-weight: bold; }
+        div#wrapper { position: absolute; top: -3px; left: 3px; right: 3px; bottom: 3px; cursor: default; z-index: 0; }
+    </style>
+    <!-- Print -->
+    <style>
+        html.print { }
+
+        body.print { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background-color: rgb(240, 240, 240); overflow: scroll; }
+
+        div#page { position: absolute; top: 0; left: 0; color: #000000; background-color: #FFF; }
+
+        div#wrapper.print { top: 48px; right: 48px; bottom: 48px; left: 48px; color: black; }
+
+            div#wrapper.print div#mapContainer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+
+        div#wrapper.printP div#miniMap { position: absolute; top: 608px; left: 0; right: 0; height: 352px; width: 100%; }
+
+        div#wrapper.printP2 div#miniMap { position: absolute; top: 1108px; left: 0; right: 0; height: 428px; width: 100%; }
+
+        div#printHeader { position: absolute; top: 0px; left: 0; right: 0; min-height: 80px; background-color: transparent; z-index: 100; }
+
+            div#printHeader > div { top: 50px; left: 108px; width: 576px; z-index: 200; }
+
+        div#wrapper.printP div#printMiddle { position: absolute; top: 608px; left: 0; right: 0; min-height: 50px; background-color: transparent; z-index: 100; }
+
+        div#wrapper.printP2 div#printMiddle { position: absolute; top: 1108px; left: 0; right: 0; min-height: 50px; background-color: transparent; z-index: 100; }
+
+        div#printMiddle > div { top: 50px; left: 32px; width: 670px; z-index: 200; }
+
+        div#wrapper.printP img.printBg, div#wrapper.printL img.printBg, div#wrapper.printP2 img.printBg, div#wrapper.printL2 img.printBg { position: absolute; top: 4px; left: 2px; z-index: 50; }
+
+        div.print p { font-size: 14px; font-weight: normal; cursor: text; }
+
+        div#backToFullScreen { position: absolute; top: 4px; left: 10px; z-index: 50; }
+    </style>
+    <!-- jQuery .ui  -->
+    <style>
+        .ui-resizable-nw { cursor: nw-resize; height: 28px; left: -5px; top: -5px; width: 28px; }
+        .ui-tabs-nav li.ui-state-default { border: 1px solid #26b3f7 !important; }
+        .ui-tabs-nav li.ui-tabs-selected, .ui-tabs-nav li.ui-state-active { border-bottom: none !important; }
+        .ui-tabs .ui-tabs-panel { padding: 2px; }
+        .ui-widget-header { background-color: transparent; background: url(""); border: none; }
+        .ui-tabs .ui-tabs-nav { margin-left: 10px; margin-right: 10px; margin-bottom: -6px; }
+            .ui-tabs .ui-tabs-nav li { top: -4px; }
+                .ui-tabs .ui-tabs-nav li a { padding: 4px; }
+        .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-size: 0.8em; resize: vertical; }
+        .ui-tabs .ui-tabs-panel { margin-top: -1px; padding: 1px; background-color: #FFF; border-radius: 8px; border: 1px solid black; }
+        button.ui-state-default { border-top: 1px solid #26b3f7 !important; border-left: 1px solid #26b3f7 !important; }
+
+        div#panels fieldset, div#panels legend, .ui-tabs .ui-tabs-panel { background-color: #0972a5; border: 1px solid #26b3f7; }
+    </style>
+    <!-- Odd Tweaks to CSS -->
+    <style>
+        .pac-container { color: #000000; }
+        div#pac-container { z-index: 10000; }
+    </style>
+</head>
+<body class="full">
+    <div id="page" class="full">
+        <div id="backToFullScreen" class="hide gmnoprint">
+            <span class="gmnoprint">Go back to:</span>
+            <button class="gmnoprint" onclick="pm.print.ReformatPage('fullScreen')">FULL Screen View</button>
+            <small>&nbsp (We are having issues with Printing, please give feedback!)</small>
+        </div>
+        <div id="wrapper" unselectable="on">
+            <div id="mapContainer" class="shadow333 full print">
+                <div id="mapCanvas" class="full">
+                </div>
+                <div id="crosshairsDiv">
+                    <img id="crosshairs" src="http://commondatastorage.googleapis.com/landmax.ca/icons/crosshairs.png" height="31" width="31" />
+                </div>
+                <div id="wait" class="hide tsBrBlack2">
+                    <p class="tsBrBlack1">Loading...</p>
+                </div>
+<!--                <div id="gMapLayers" class="gmnoprint" style="margin: 5px; z-index: 0; position: absolute; cursor: pointer; text-align: left; width: 85px;">
+                    <div id="gMapLayersTop" style="direction: ltr; overflow: hidden; text-align: left; position: relative; color: rgb(0, 0, 0); font-family: Arial,sans-serif; -moz-user-select: none; font-size: 13px; background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 1px 6px; border: 1px solid rgb(113, 123, 135); box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4); font-weight: bold;" title="Map may ZOOM OUT, then add a LAYER to the map.">
+                        Layers
+                        <img src="http://maps.gstatic.com/mapfiles/arrow-down.png" style="-moz-user-select: none; border: 0px none; padding: 0px; margin: -2px 0px 0px; position: absolute; right: 6px; top: 50%; width: 7px; height: 4px;" />
+                    </div>
+                    <div id="gMapLayersContent" style="background-color: white; z-index: -1; padding-top: 2px; border-width: 0px 1px 1px; border-style: none solid solid; border-color: -moz-use-text-color rgb(113, 123, 135) rgb(113, 123, 135); -moz-border-top-colors: none; -moz-border-right-colors: none; -moz-border-bottom-colors: none; -moz-border-left-colors: none; -moz-border-image: none; box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4); position: relative; text-align: left; display: none;">
+                        <div id="gMapLayerNone" title="Remove All Layers">
+                            None
+                        </div>
+                        <div id="gMapLayerWeather" title="Show Weather Layer">
+                            Weather
+                        </div>
+                    </div>
+                </div>-->
+                <div id="miniMap" class="shadow333 print">
+                    <div id="map2">
+                    </div>
+                    <div id="crosshairsDiv2">
+                        <img id="crosshairs2" src="http://commondatastorage.googleapis.com/landmax.ca/icons/crosshairs.png" height="31" width="31" />
+                    </div>
+                    <div id="syncMapsControl" class="gmnoprint">
+                        <label for="syncMapsChk">Sync:</label>
+                        <input id="syncMapsChk" type="checkbox" onchange="pm.map2.SetSync(this)" />
+                    </div>
+                    <div id="miniMapOpen" class="gmnoprint">
+                        <span class="ui-icon ui-icon-arrowthick-2-se-nw"></span>
+                    </div>
+                </div>
+
+            </div>
+            <div id="printHeader" unselectable="off" class="print hide">
+                <img class="printBg" src="../bc/images/PIDmap-Print-BG.png" alt="" width="724" height="94" />
+                <div class="full">
+                    <p contenteditable="true"><strong id="printPID"></strong><span>DELETE THIS TEXT, then add your own comments, then use your browsers print command. Set your printer settings margins to zero, scale to 100% and turn off everything else.</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="panels" unselectable="on" class="unselectable gmnoprint hide">
+        <div id="controlsPanel" class="tabPanel panel pidBlueEdge">
+            <div class="titleBar pidBlueBg">
+                <div class="topLeft">
+                    <a href="http://pidmap.com" target="_blank" title="GO TO main site.">
+                        <img class="dragImg" src="../bc/images/PIDmapIcon64.png" height="64" width="64" alt="PIDmap Home Page!" title="Go to the PIDmap Home Page in a new window." /></a>
+                </div>
+                <h4>PIDmap | NZ</h4>
+            </div>
+            <div id="minMax" unselectable="on" draggable="false">
+                <img class="swap32Icon unselectable" draggable="false" src="http://commondatastorage.googleapis.com/landmax.ca/ewm/minMax.png" height="64" width="32" />
+            </div>
+            <div id="pidTabs" class="tabPane">
+                <ul>
+                    <li>
+                        <a href="#tabPidMap">Search</a>
+                    </li>
+                    <li>
+                        <a href="#tabPrint">Print</a>
+                    </li>
+                    <li>
+                        <a href="#tabContact">Contact</a>
+                    </li>
+                </ul>
+                <div id="tabPidMap">
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp 1) Enter Place: &nbsp </legend>
+                        <input id="searchTextField" type="text" size="36" placeholder="Start to TYPE, then PICK from list!" />
+                        <br />
+                        <small style="display: inline-block; margin-bottom: 8px">Start to type "City", then Pick.</small>
+                    </fieldset>
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp 2) Enter Address: &nbsp </legend>
+                        <input id="addressTextField" type="text" size="36" placeholder="Type Address, press ENTER" onkeydown="if (event.keyCode == 13 || event.keyCode == 9 ) pm.map1.codeAddress()" disabled="disabled" />
+                    </fieldset>
+                    <!--                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp 3) Add Land Parcels (Yellow) &nbsp</legend>
+                        <button id="loadPlotsBtn" class="juiButton" title="ZOOM IN! Then click to load most land parcels in BC.">Load All NZ Parcels</button>
+                        <button id="unLoadPlotsBtn" class="juiButton right closeBtn" title="Clear the YELLOW parcel lines from the map.">X</button>
+                    </fieldset>-->
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp 3) Center Map, Get PID &nbsp </legend>
+                        <button id="fetchPlotCenterBtn" class="juiButton" title="Move the MAP so the PARCEL is in the center, under the cross-hairs, then click this button. The parcel will be highlighted inpm.GREEN.">Fetch PID from Map Center</button><br />
+                        <br />
+                        <small>(OR Right Click a House to get the Parcel)</small><br />
+                        <small>(Left Click the Parcel Polygon to get the Data)</small>
+                    </fieldset>
+                    <!--                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp PID# to Map Search: &nbsp </legend>
+                        <input id="fetchPlotPidTxt" type="text" size="14" value="" onkeydown="if (event.keyCode == 13) document.getElementById('fetchPlotPidBtn').click()" placeholder="Enter PID here." />
+                        <button id="fetchPlotPidBtn" class="juiButton" title="Enter the PID and click the button, the map will zoom in on the parcel colored in ORANGE.">Find PID</button>
+                    </fieldset>-->
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp History (PIDs Viewed) &nbsp </legend>
+                        <span style="width: 128px; display: inline-block">
+                            <select id="selectPids">
+                            </select>
+                        </span>
+                        <button id="clearPidAll" class="juiButton right closeBtn" title="Clear ALL the outlined Parcel Polygons from the map.">XX</button>
+                        <button id="clearPid" class="juiButton right closeBtn" title="Clear the CURRENT outlined Parcel Polygons from the map.">X</button>
+
+
+                    </fieldset>
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp Mini-Map &nbsp </legend>
+                        <label for="syncMapsChk">Show/Hide Mini-Map:</label>
+                        <input id="showHideMiniMap" type="checkbox" checked="checked" onchange="pm.map2.ShowMiniMap()" />
+                    </fieldset>
+                </div>
+                <!--<div id="tabDrive">
+                    <h3>Login topm.Google Drive</h3>
+                </div>
+                               <div id="tabAbout">
+
+                </div>-->
+                <div id="tabPrint">
+                    <fieldset class="ui-widget-content">
+                        <legend>&nbsp Print Various Map Views &nbsp </legend>
+                        <p>
+                            Clicking the button below will reformat this web page.<br />
+                            1) Then adjust the map(s) and add your own comments.<br />
+                            2) Click your Browsers "Print Preview" menu.<br />
+                            3) Remove any margins and set the view to 100%.<br />
+                            4) Set Portrait or Landscape depending on template.<br />
+                        </p>
+                        <br />
+                        <p>
+                            Pick a paper size or enter your desired pixels:<br />
+                            <small>( screen = 96 dpi, margin = 1/2 inch or 48px )</small>
+                        </p>
+                        <input type="radio" id="printSize1" name="printSize" value="816,1056" /><label for="printSize1">Portrait/Letter (8.5 x 11):</label><br />
+                        <input type="radio" id="printSize2" name="printSize" value="816,1344" /><label for="printSize2">Portrait/Legal (8.5 x 14):</label><br />
+                        <input type="radio" id="printSize3" name="printSize" value="1056,1632" /><label for="printSize3">Portrait/Tabloid (11 x 17):</label><br />
+                        <input type="radio" id="printSize4" name="printSize" value="1056,816" /><label for="printSize4">Landscape/Letter (11 x 8.5):</label><br />
+                        <input type="radio" id="printSize5" name="printSize" value="1632,1056" /><label for="printSize5">Landscape/Ledger (17 x 11):</label><br />
+                        <br />
+                        Width:
+                        <input id="pageWidth" type="text" size="4" /><small>(pixels)</small>&nbsp&nbsp
+                        Height:
+                        <input id="pageHeight" type="text" size="4" /><small>(pixels)</small><br />
+                        <br />
+                        <button onclick="pm.print.ReformatPage()">Reformat Page</button>
+                    </fieldset>
+
+
+
+                    <!--                    <a href="http://pidmap.com/bc/video/index.htm" target="_blank" title="Watch an INTRO VIDEO.">
+                        <img class="icon36Btn" src="http://commondatastorage.googleapis.com/landmax.ca/icons/36/video2.png" width="36" height="36" /></a>
+                    <a href="http://pidmap.com" target="_blank" title="Go to our HOME page for help.">
+                        <img id="helpBtn" class="icon36Btn" src="http://commondatastorage.googleapis.com/landmax.ca/icons/36/help.png" width="36" height="36" /></a>-->
+                </div>
+                <div id="tabContact">
+                    <fieldset class="ui-widget-content">
+                        <legend>Contact Us</legend>
+                        <p>Keith Hern</p>
+                        <p>keith@pidmap.com</p>
+                        <p><a href="http://pidmap.com">PIDmap.com</a></p>
+                    </fieldset>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--pm.Globals -->
+    <script>
+        var pm = {};
+        pm.client = {};
+        pm.hash = {};
+        pm.init = {};
+        pm.init.lat = -41;
+        pm.init.lng = -186;
+        pm.init.zoom = 6;
+        pm.layers = {};
+        pm.layers.ft = [];
+        pm.marker = {};
+        pm.map1 = {};
+        pm.map2 = {};
+        pm.nz = {};
+        pm.place = {};
+        pm.print = {};
+    </script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        function loadClient() {
+            if (google.loader.ClientLocation) {
+                pm.client.loaderResult = google.loader.ClientLocation;
+                pm.client.cc = google.loader.ClientLocation.country_code;
+                pm.client.lat = google.loader.ClientLocation.latitude;
+                pm.client.lng = google.loader.ClientLocation.longitude;
+            } else { pm.client.cc = "unknown" }
+            pm.init.Map();
+        }
+        google.load("jquery", "1");
+        google.load("jqueryui", "1");
+        google.load("maps", "3", { callback: loadClient, other_params: "&sensor=false&libraries=weather,places,geometry,drawing" });
+    </script>
+    <!--UI-->
+    <script>
+        $(function () {
+            $("div#panels div.tabPanel").tabs();
+            $("div.panel").draggable({ handle: "div.titleBar", containment: "document" });
+
+            $("div#panels div#minMax").click(function () {
+                $('div#panels div#pidTabs').fadeToggle();
+                $("div#panels div#minMax img").toggleClass('swap32Icon');
+            });
+            $("div#panels").fadeIn();
+
+            $("div#miniMap").resizable({
+                handles: "nw",
+                containment: "parent",
+                stop: function (event, ui) {
+                    google.maps.event.trigger(pm.gMap2, 'resize');
+                    setTimeout(' pm.gMap2.setCenter(pm.gMap.getCenter())', 800);
+                    setTimeout(' pm.map1.MiniMapTweakVis()', 1000);
+                }
+            });
+
+            $('.juiButton').button();
+
+            //$('button#unLoadPlotsBtn').button({ disabled: true });
+
+        })
+    </script>
+    <!-- HASH -->
+    <script>
+        pm.init.Hash = function () {
+            pm.hash.Read = function () {
+
+                pm.hash.windowLocation = window.location.hash.substring(1);
+                pm.hash.initArray = pm.hash.windowLocation.split("&");
+                if (pm.hash.initArray.length === 4) {
+                    try {
+                        pm.init.lat = pm.hash.initArray[0];
+                        pm.init.lng = pm.hash.initArray[1];
+                        pm.init.zoom = parseInt(pm.hash.initArray[2], 10);
+                        if (pm.init.zoom >= 15) {
+                            pm.init.typeId = pm.G.MapTypeId.HYBRID;
+                        }
+                        pm.hash.pid = pm.hash.initArray[3];
+                    } catch (e) {
+                        alert("Sorry,There was an error in the URL.\n\nError:\n\n" + e + "\n\nCheck the URL or just delete everthing after the #\nand try again.")
+                    }
+                }
+            }
+            pm.hash.Set = function () {
+
+                var tempCenter = pm.gMap.getCenter();
+
+                pm.hash.lat = tempCenter.lat().toFixed(6);
+                pm.hash.lng = tempCenter.lng().toFixed(6);
+                pm.hash.zoom = pm.gMap.getZoom();
+                pm.hash.pid = $('select#selectPids option:selected').val() || "noPID";
+
+                pm.hash.string = "#" + pm.hash.lat + "&" + pm.hash.lng + "&" + pm.hash.zoom + "&" + pm.hash.pid;
+
+
+                window.location.hash = pm.hash.string;
+            };
+        }
+    </script>
+    <!--Map1-->
+    <script>
+        pm.init.Map = function () {
+            $(function () {
+                pm.init.Hash();
+                pm.init.LoadMap = function () {
+
+                    pm.G = google.maps;
+
+                    pm.gMap = new pm.G.Map(document.getElementById("mapCanvas"));
+                    pm.init.typeId = pm.G.MapTypeId.TERRAIN;
+
+                    if (pm.client.cc === "NZ") {
+                        pm.init.lat = pm.client.lat;
+                        pm.init.lng = pm.client.lng;
+                        pm.init.zoom = 6;
+                    }
+
+                    if (window.location.hash.length > 0) {
+                        pm.hash.Read();
+                    }
+
+                    pm.init.latLng = new pm.G.LatLng(pm.init.lat, pm.init.lng);
+
+                    pm.map1.options = {
+                        backgroundColor: "#326b4b",
+                        center: pm.init.latLng,
+                        zoom: pm.init.zoom,
+                        mapTypeId: pm.init.typeId,
+                        disableDefaultUI: true,
+                        mapTypeControl: true,
+                        mapTypeControlOptions: {
+                            style: pm.G.MapTypeControlStyle.DROPDOWN_MENU,
+                            position: google.maps.ControlPosition.TOP_RIGHT
+                        },
+                        panControl: true,
+                        panControlOptions: {
+                            position: google.maps.ControlPosition.RIGHT_TOP
+                        },
+                        zoomControl: true,
+                        zoomControlOptions: {
+                            style: google.maps.ZoomControlStyle.LARGE,
+                            position: google.maps.ControlPosition.RIGHT_TOP
+                        },
+                        streetViewControl: false,
+                        streetViewControlOptions: {
+                            position: google.maps.ControlPosition.RIGHT_TOP
+                        },
+                        overviewMapControl: false,
+                        overviewMapControlOptions: {
+                            opened: false
+                        },
+                        minZoom: 3
+                    };
+
+                    google.maps.event.addListenerOnce(pm.gMap, 'idle', function () {
+                        pm.init.Map2();
+                    });
+
+                    pm.gMap.setOptions(pm.map1.options);
+
+                    pm.layers.cloud = new google.maps.weather.CloudLayer();
+
+                    pm.layers.weather = new google.maps.weather.WeatherLayer({
+                        temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS,
+                        windSpeedUnits: google.maps.weather.WindSpeedUnit.KILOMETERS_PER_HOUR
+                    });
+
+                    pm.layers.borders = new pm.G.FusionTablesLayer('5323560', {
+                        "clickable": true
+                    });
+
+                    pm.layers.LoadWeather = function () {
+                        pm.layers.borders.setMap(pm.gMap);
+                        pm.layers.weather.setMap(pm.gMap);
+                        pm.layers.cloud.setMap(pm.gMap);
+                    }
+                    if (pm.init.zoom <= 14) {
+                        pm.layers.LoadWeather();
+                    }
+
+                    pm.layers.SetByZoom = function (z) {
+
+                        var z = pm.gMap.getZoom();
+                        if (z <= 14) {
+                            pm.gMap.setMapTypeId(pm.G.MapTypeId.TERRAIN);
+                            pm.layers.LoadWeather();
+                        } else {
+                            pm.gMap.setMapTypeId(pm.G.MapTypeId.HYBRID);
+                        }
+                        if (z <= 8) {
+                            pm.layers.borders.setMap(pm.gMap);
+                        } else {
+                            pm.layers.borders.setMap();
+                        }
+                    }
+
+                    pm.map1.ZoomChanged = function () {
+                        var newZoom = pm.gMap.getZoom();
+                        pm.layers.SetByZoom(newZoom);
+                    };
+
+                    pm.map1.AddInitEvents = function () {
+                        pm.map1.zoomListener = pm.G.event.addListener(pm.gMap, 'zoom_changed', function () {
+                            pm.map1.ZoomChanged();
+                        });
+
+                        pm.hash.stringListener = pm.G.event.addListener(pm.gMap, 'idle', function () {
+                            pm.hash.Set()
+                        });
+                    };
+
+
+
+                    $.getScript('http://commondatastorage.googleapis.com/landmax.ca/js/keyDragZoom.js', function () {
+
+                        setTimeout('pm.map1.AddInitEvents();', 5000);
+                        setTimeout('pm.gMap.enableKeyDragZoom()', 4000);
+                        pm.layers.SetByZoom(pm.init.zoom);
+                        $('div#gMapLayersContent').hide();
+                    });
+
+                    $.getScript('mapNZ.js', function () {
+
+                    });
+                }
+
+                pm.init.LoadMap();
+
+            });  //end of document.ready
+        }
+    </script>
+    <!--Map2-->
+    <script>
+        pm.init.Map2 = function () {
+
+            $(function () {
+
+                pm.init.LoadMap2 = function () {
+
+                    pm.gMap2 = new pm.G.Map(document.getElementById("map2"));
+                    pm.gMap2.center = pm.gMap.getCenter();
+                    pm.gMap2.zoom = pm.gMap.getZoom() - 3;
+
+                    pm.map2.options = {
+                        backgroundColor: "#326b4b",
+                        center: pm.gMap2.center,
+                        zoom: pm.gMap2.zoom,
+                        mapTypeId: pm.G.MapTypeId.TERRAIN,
+                        disableDefaultUI: true,
+                        mapTypeControl: false,
+                        streetViewControl: false,
+                        overviewMapControl: false,
+                        minZoom: 3,
+                        maxZoom: 15
+                    };
+
+                    pm.gMap2.setOptions(pm.map2.options);
+                    pm.map2.miniMapVis = true;
+                    setTimeout('pm.map2.MiniMapTweakVis()', 1000);
+
+                    google.maps.event.addListenerOnce(pm.gMap2, 'idle', function () {
+                        pm.init.Place();
+                        pm.init.Print();
+                        pm.map2.InitSync();
+                    })
+                }
+
+                pm.map2.MiniMapTweakVis = function () {
+
+                    pm.gMap2.setOptions({ zoomControl: false });
+                    $("div#map2 .gmnoprint").hide();
+                    pm.gMap2.setOptions({
+                        zoomControl: true, zoomControlOptions: {
+                            style: google.maps.ZoomControlStyle.SMALL,
+                            position: google.maps.ControlPosition.LEFT_BOTTOM
+                        }
+                    });
+                }
+
+                pm.map2.ResetMap = function () {
+                    google.maps.event.trigger(pm.gMap, 'resize');
+                    google.maps.event.trigger(pm.gMap2, 'resize');
+                    setTimeout('pm.gMap.setCenter(pm.gMap.resetCenter)', 500);
+                    setTimeout('pm.gMap2.setCenter(pm.gMap2.resetCenter)', 800);
+                }
+
+                pm.map2.ShowMiniMap = function () {
+                    $('div#miniMap').toggleClass('hide');
+                    if (!pm.map2.miniMapVis) {
+                        google.maps.event.trigger(pm.gMap2, 'resize');
+                        setTimeout('google.maps.event.trigger(pm.gMap2,"resize");', 500);
+                        setTimeout('pm.gMap2.setCenter(pm.gMap.getCenter())', 800);
+                        setTimeout('pm.map2.MiniMapTweakVis()', 1000);
+                        pm.map2.miniMapVis = true;
+                        google.maps.event.trigger(pm.gMap2, 'resize');
+                    } else { pm.map2.miniMapVis = false }
+                }
+
+                pm.map2.UnLoad2ndMap = function () {
+                    pm.map2.UnSyncMaps();
+                    pm.marker2 = null;
+                    pm.gMap2 = null;
+                }
+
+                pm.map2.SyncMaps = function () {
+                    pm.map2.mapDrag = google.maps.event.addListener(pm.gMap, 'dragend', function () {
+                        pm.gMap2.setCenter(pm.gMap.getCenter());
+                        var zoom = pm.gMap.getZoom();
+                        pm.gMap2.setZoom(zoom - 5);
+                    });
+                    pm.map2.miniMapDrag = google.maps.event.addListener(pm.gMap2, 'dragend', function () {
+                        pm.gMap.setCenter(pm.gMap2.getCenter());
+                    });
+                    $('div#miniMap div#crosshairsDiv2').show();
+                }
+
+                pm.map2.UnSyncMaps = function () {
+                    google.maps.event.removeListener(pm.map2.mapDrag);
+                    google.maps.event.removeListener(pm.map2.miniMapDrag);
+                    $('div#miniMap div#crosshairsDiv2').hide();
+                }
+
+                pm.map2.SetSync = function (e) {
+                    if ($(e).is(":checked")) {
+                        pm.map2.SyncMaps();
+                    } else { pm.map2.UnSyncMaps() }
+                }
+
+                pm.map2.InitSync = function () {
+                    if (pm.gMap2.zoom <= 12 && !$('input#syncMapsChk').is(':checked')) {
+                        $('input#syncMapsChk').click();
+                    }
+                }
+
+                pm.init.LoadMap2();
+            })
+        }
+    </script>
+    <!--Place-->
+    <script>
+        pm.init.Place = function () {
+
+            $(function () {
+                pm.place.defaultBounds = pm.gMap.getBounds();
+                pm.place.input = document.getElementById('searchTextField');
+                pm.place.options = {
+                    bounds: pm.place.defaultBounds,
+                    types: ['(cities)'],
+                    componentRestrictions: { country: 'nz' }
+                };
+
+                pm.place.autocomplete = new google.maps.places.Autocomplete(pm.place.input, pm.place.options);
+                pm.place.autocomplete.bindTo('bounds', pm.gMap);
+
+                google.maps.event.addListener(pm.place.autocomplete, 'place_changed', function () {
+                    pm.place.result = pm.place.autocomplete.getPlace();
+                    if (pm.place.result.geometry.viewport) {
+                        pm.gMap.fitBounds(pm.place.result.geometry.viewport);
+                    } else {
+                        pm.gMap.setCenter(pm.place.result.geometry.location);
+                        pm.gMap.setZoom(13);
+                    }
+                    $('input#addressTextField').attr('disabled', false);
+                });
+
+                pm.map1.geocoder = new google.maps.Geocoder();
+
+                pm.map1.codeAddress = function () {
+
+                    if (pm.place.result.formatted_address) {
+
+                        var address = document.getElementById("addressTextField").value + ", " + pm.place.result.formatted_address;
+                        var currentBounds = pm.gMap.getBounds();
+
+                        pm.map1.geocoder.geocode({ 'address': address, 'region': 'ca', 'bounds': currentBounds }, function (results, status) {
+                            if (status == google.maps.GeocoderStatus.OK) {
+                                pm.gMap.setCenter(results[0].geometry.location);
+                                pm.gMap.setZoom(17);
+                                setTimeout('pm.gMap.setZoom(19);', 1000);
+                            } else {
+                                alert("Geocode was not successful for the following reason: " + status);
+                            }
+                        });
+
+                    } else { alert('You need to PICK a PLACE first!\n\nTHEN type an address.') }
+                }
+
+            })
+
+        }
+    </script>
+    <!--Print-->
+    <script>
+
+        pm.init.Print = function () {
+
+            $(function () {
+
+                $('input[name=printSize]:radio').change(function () {
+                    var size = $(this).val();
+                    var sizeA = size.split(',');
+                    var width = sizeA[0];
+                    var height = sizeA[1];
+                    $('div#tabPrint input#pageWidth').val(width);
+                    $('div#tabPrint input#pageHeight').val(height);
+                });
+
+                pm.print.ReformatPage = function (size) {
+
+                    if (size === "fullScreen") {
+                        $('html, body, div#page, div#wrapper').removeClass('print');
+                        $('div#backToFullScreen, div#printHeader, div#printMiddle').hide();
+                        $('div#page').css({ 'width': '', 'height': '' });
+                        $('div#miniMap').css({ 'width': '', 'height': '', 'top': '', 'left': '' });
+                        $('div#mapContainer .gmnoprint, div#miniMap .gmnoprint').show();
+                        $('div#panels').show();
+                        pm.map2.SyncMaps();
+                    } else {
+
+                        pm.map1.resetCenter = pm.gMap.getCenter();
+
+                        var width = $('div#tabPrint input#pageWidth').val();
+                        var height = $('div#tabPrint input#pageHeight').val();
+
+                        $('html, body, div#page, div#wrapper').addClass('print');
+                        $('div#backToFullScreen, div#printHeader').show();
+                        $('div#page.print').css({ 'width': width, 'height': height });
+                        $('div#miniMap').css({ 'top': '', 'left': '', 'width': '', 'height': '' });
+                        $('div#panels').hide();
+                        $('div#miniMap .gmnoprint, div#mapContainer .gmnoprint').hide();
+                        pm.map2.UnSyncMaps();
+                    }
+                    pm.map2.ResetMap();
+                }
+            })
+        }
+    </script>
+
+    <!--pm.Google Analytics -->
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-32834626-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+    </script>
+</body>
+</html>
